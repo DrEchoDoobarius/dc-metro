@@ -10,6 +10,11 @@ config = {
 
 	# WIFI Password
 	'wifi_password': '<Your WiFi Password>',
+    
+    'adafruit_io_username': '<IO Username>',
+    'adafruit_io_key': '<IO KEY>',
+
+    'timezone': 'America/New_York',
 
 	#########################
 	# Metro Configuration   #
@@ -20,6 +25,10 @@ config = {
 
 	# Metro Train Group
 	'train_group': '2',
+
+    'alt_train_group': '1',
+
+    'weekend_start_hour': 2,
 
 	# API Key for WMATA
 	'metro_api_key': '<Your WMATA API Key>',
