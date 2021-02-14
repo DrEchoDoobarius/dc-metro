@@ -12,6 +12,9 @@ STATION_CODE = config['metro_station_code']
 TRAIN_GROUP = config['train_group']
 ALT_TRAIN_GROUP = config['alt_train_group']
 WEEKEND_START_HOUR = config['weekend_start_hour']
+WEEKDAY_SLEEP_HOUR = config['weekday_sleep_hour']
+WEEKEND_SLEEP_HOUR = config['weekend_sleep_hour']
+SLEEP_HOURS = config['sleep_hours']
 REFRESH_INTERVAL = config['refresh_interval'] * 10
 
 button_up = digitalio.DigitalInOut(board.BUTTON_UP)
@@ -28,9 +31,10 @@ weekDaySwitch = False
 def refresh_trains() -> [dict]:
     try:
         today = time.localtime()
-        print(today)
+        # print(today)
         dayNum = today.tm_wday
         hour = today.tm_hour
+
         if dayNum > 4:
             isWeekend = True
             print('Its the Weekend')
@@ -61,17 +65,37 @@ _network.get_local_time()
 
 counter = 0
 while True:
-    if not button_up.value:
-        byWeekDay = True
-        weekDaySwitch = False
-    elif not button_down.value:
-        byWeekDay = False
-        weekDaySwitch = not weekDaySwitch
-    elif counter != REFRESH_INTERVAL:
-        counter = counter + 1
-        time.sleep(0.1)
-        continue
+    try:
+        today = time.localtime()
+        dayNum = today.tm_wday
+        hour = today.tm_hour
 
-    counter = 0
-    train_board.refresh()
-    time.sleep(0.1)
+        if(dayNum > 4):
+            sleep_hour = WEEKEND_SLEEP_HOUR
+        else:
+            sleep_hour = WEEKDAY_SLEEP_HOUR
+
+        if (hour > sleep_hour and hour < sleep_hour + SLEEP_HOURS - 1):
+            train_board.hideHeading()
+            pastSleepHour = hour - sleep_hour
+            time.sleep(3600 * (SLEEP_HOURS - pastSleepHour))
+            counter = REFRESH_INTERVAL
+            train_board.showHeading()
+
+        if not button_up.value:
+            byWeekDay = True
+            weekDaySwitch = False
+        elif not button_down.value:
+            byWeekDay = False
+            weekDaySwitch = not weekDaySwitch
+        elif counter < REFRESH_INTERVAL:
+            counter = counter + 1
+            time.sleep(0.1)
+            continue
+
+        counter = 0
+        train_board.refresh()
+        time.sleep(0.1)
+    except e:
+        print('An Exception Occured')
+        print(e)

@@ -28,7 +28,13 @@ config = {
 
     'alt_train_group': '1',
 
-    'weekend_start_hour': 2,
+    'weekend_start_hour': 14,
+
+    'weekend_sleep_hour': 2,
+    
+    'weekday_sleep_hour': 0,
+    
+    'sleep_hours': 4,
 
 	# API Key for WMATA
 	'metro_api_key': '<Your WMATA API Key>',
